@@ -1,15 +1,14 @@
 function mapPreload(game) {
-    game.load.tilemap('test-map', '/assets/tiled/test-map.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('grass-tiles-2-small', '/assets/tiled/tileset/grass-tiles-2-small.png');
-    game.load.image('tree2-final', '/assets/tiled/tileset/tree2-final.png');
+    game.load.tilemap('example-map', '/assets/tilemaps/example-map.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('tilesheet_complete', '/assets/tilesets/topdown-shooter/Tilesheet/tilesheet_complete.png');
 }
 function mapCreate(game) {
     // Load in the map!
-    var map = game.add.tilemap('test-map');
+    var map = game.add.tilemap('example-map');
 
-    map.addTilesetImage('grass-tiles-2-small');
-    map.addTilesetImage('tree2-final');
+    map.addTilesetImage('tilesheet_complete');
 
     var layer = map.createLayer(0);
+    map.createLayer(1);
     layer.resizeWorld();
 }
