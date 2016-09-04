@@ -20,6 +20,7 @@
         body {
             margin: 0;
         }
+
         .title_bar {
             position: absolute;
             opacity: 0.75;
@@ -27,10 +28,12 @@
             background: #000;
             padding: 0 0.5em;
         }
+
         .topIcon {
             height: 30px;
             float: left;
         }
+
         #mineral_count, #supply_count {
             color: white;
             float: left;
@@ -52,11 +55,14 @@
             render: render
         });
 
+        var keys;
+
         game.width = width;
         game.height = height;
 
         var player;
         var cursors;
+        var pointerLocation;
 
         var minerals = 1200;
 
@@ -66,7 +72,7 @@
 
         function create() {
             // Key Mappings
-            inputFullScreenKey(game);
+//            inputFullScreenKey(game);
 
             // Set camera size and scale
             cameraSetScaleAndSize(game, width, height)
@@ -76,7 +82,6 @@
 
             // Create Player and have the camera follow its position
             player = playerCreate(game);
-            cameraFollowPlayer(game, player);
 
             // Create Physics and attach to player.
             physicsCreate(game);
@@ -85,11 +90,16 @@
             // Create Input
             cursors = inputCreateCursors(game);
 
+            game.input.keyboard.addKeys(inputCreateKeys());
+//            inputCreateMouseLock(game);
+
         }
 
         function update() {
-            inputUpdateCursorMovement(player, cursors);
-            minerals = minerals + 5;
+            inputUpdateCursorMovement(game, cursors);
+//            (game, pointerLocation, currentPointerLocation) {
+            inputMoveCameraByPointer(game);
+//            pointerLocation = inputMoveCameraByPointer(game, pointerLocation, game.input.pointer1);
         }
 
         function render() {

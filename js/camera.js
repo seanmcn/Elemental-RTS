@@ -6,9 +6,6 @@ function cameraSetScaleAndSize(game, width, height) {
     // Set camera size
     game.camera.setSize(width, height);
 }
-function cameraFollowPlayer(game, player){
-    game.camera.follow(player);
-}
 function cameraDebug(game){
     game.debug.cameraInfo(game.camera, 32, 32);
 }
