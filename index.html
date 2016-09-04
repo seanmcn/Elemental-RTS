@@ -4,6 +4,13 @@
     <meta charset="UTF-8"/>
     <title>Elemental RTS</title>
     <script src="vendor/phaser.min.js"></script>
+
+    <script src="js/camera.js"></script>
+    <script src="js/display.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/physics.js"></script>
+    <script src="js/player.js"></script>
     <style>
         html {
             padding: 0;
@@ -33,93 +40,43 @@
         game.width = width;
         game.height = height;
 
-        var keyFTen; // Full Screen
-
-        var map;
-        var tileset;
-        var layer;
         var player;
         var cursors;
-        var bg;
 
         function preload() {
-            // Map
-            game.load.tilemap('test-map', 'assets/tiled/test-map.json', null, Phaser.Tilemap.TILED_JSON);
-            game.load.image('grass-tiles-2-small', 'assets/tiled/tileset/grass-tiles-2-small.png');
-            game.load.image('tree2-final', 'assets/tiled/tileset/tree2-final.png');
+            mapPreload(game);
         }
 
         function create() {
             // Key Mappings
-            keyFTen = game.input.keyboard.addKey(Phaser.KeyCode.F10);
+            inputFullScreenKey(game);
 
-            // Set scale mode (maintain aspect ratio)
-            game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+            // Set camera size and scale
+            cameraSetScaleAndSize(game, width, height)
 
-            // Set camera size
-            game.camera.setSize(width, height);
+            // Create Map
+            mapCreate(game);
 
-            // Bind input for full screen
-            keyFTen.onDown.add(function () {
-                goFullScreen();
-            }, this);
+            // Create Player and have the camera follow its position
+            player = playerCreate(game);
+            cameraFollowPlayer(game, player);
 
+            // Create Physics and attach to player.
+            physicsCreate(game);
+            physicsEnableForPlayer(game, player);
 
-            // Load in the map!
-            map = game.add.tilemap('test-map');
-
-            map.addTilesetImage('grass-tiles-2-small');
-            map.addTilesetImage('tree2-final');
-
-            layer = map.createLayer(0);
-            layer.resizeWorld();
-
-
-            game.physics.startSystem(Phaser.Physics.P2JS);
-            player = game.add.sprite(game.world.centerX, game.world.centerY, 'player');
-            game.physics.p2.enable(player);
-            cursors = game.input.keyboard.createCursorKeys();
-            game.camera.follow(player);
+            // Create Input
+            cursors = inputCreateCursors(game);
 
         }
 
         function update() {
-            var speed = 1200;
-            player.body.setZeroVelocity();
-
-            if (cursors.up.isDown)
-            {
-                player.body.moveUp(speed)
-            }
-            else if (cursors.down.isDown)
-            {
-                player.body.moveDown(speed);
-            }
-
-            if (cursors.left.isDown)
-            {
-                player.body.velocity.x = -speed;
-            }
-            else if (cursors.right.isDown)
-            {
-                player.body.moveRight(speed);
-            }
+            inputUpdateCursorMovement(player, cursors);
         }
 
         function render() {
-            game.debug.cameraInfo(game.camera, 32, 32);
-            game.debug.spriteCoords(player, 32, 500);
-
-        }
-
-        function goFullScreen() {
-            if (game.scale.isFullScreen) {
-                game.scale.stopFullScreen();
-            }
-            else {
-                game.scale.startFullScreen(false);
-            }
+            cameraDebug(game);
+            playerDebug(game, player);
 
         }
 
