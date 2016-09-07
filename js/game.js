@@ -23,6 +23,7 @@ window.onload = function () {
 
     var selectionAreaGraphics = false;
 
+    var cameraMovementSpeed = 30;
 
     function preload() {
         mapPreload(game);
@@ -52,8 +53,8 @@ window.onload = function () {
     }
 
     function update() {
-        inputMoveCameraByCursor(game, cursors);
-        inputMoveCameraByPointer(game);
+        inputMoveCameraByCursor(cameraMovementSpeed, game, cursors);
+        inputMoveCameraByPointer(cameraMovementSpeed, game);
 
         //Note Sean: Is a callback really needed here? Need to think about this.
         inputSelectionArea(initMouseX, initMouseY, selectionAreaGraphics, game, function (iMX, iMY, sAG) {

@@ -32,50 +32,49 @@ function inputCreateCursors(game) {
 
 /**
  * Moves the camera based on the cursor keys.
+ * @param cameraMovementSpeed
  * @param game
  * @param cursors
  */
-function inputMoveCameraByCursor(game, cursors) {
-    var movementSpeed = 20;
-
+function inputMoveCameraByCursor(cameraMovementSpeed, game, cursors) {
     if (cursors.up.isDown) {
-        game.camera.y -= movementSpeed;
+        game.camera.y -= cameraMovementSpeed;
     }
     else if (cursors.down.isDown) {
-        game.camera.y += movementSpeed;
+        game.camera.y += cameraMovementSpeed;
     }
 
     if (cursors.left.isDown) {
-        game.camera.x -= movementSpeed;
+        game.camera.x -= cameraMovementSpeed;
     }
     else if (cursors.right.isDown) {
-        game.camera.x += movementSpeed;
+        game.camera.x += cameraMovementSpeed;
     }
 }
 
 /**
  * Moves the camera based on the mouse.
+ * @param cameraMovementSpeed
  * @param game
  */
-function inputMoveCameraByPointer(game) {
-    var movementSpeed = 20;
+function inputMoveCameraByPointer(cameraMovementSpeed, game) {
     var hotArea = 100;
     var widthActionArea = game.width - hotArea;
     var heightActionArea = game.height - hotArea;
 
     if (game.input.mousePointer.position.x >= widthActionArea) {
-        game.camera.x += movementSpeed;
+        game.camera.x += cameraMovementSpeed;
     }
 
     if (game.input.mousePointer.position.x <= hotArea) {
-        game.camera.x -= movementSpeed;
+        game.camera.x -= cameraMovementSpeed;
     }
 
     if (game.input.mousePointer.position.y >= heightActionArea) {
-        game.camera.y += movementSpeed;
+        game.camera.y += cameraMovementSpeed;
     }
     if (game.input.mousePointer.position.y <= hotArea) {
-        game.camera.y -= movementSpeed;
+        game.camera.y -= cameraMovementSpeed;
     }
 }
 
