@@ -1,3 +1,7 @@
+/**
+ * Create an object of input keys for easier reference within the game.
+ * @returns object of input keys.
+ */
 function inputCreateKeys() {
     return {
         'movement_attack': Phaser.Keyboard.A, // Attack move
@@ -14,16 +18,24 @@ function inputCreateKeys() {
 
         'unit_create_one': Phaser.Keyboard.W, // Unit 1.
         'unit_create_worker': Phaser.Keyboard.D // Worker
-
-        // keys.save.onDown.add(save, this);
     };
 }
 
+/**
+ * Enables input using the cursor keys.
+ * @param game
+ * @returns {*}
+ */
 function inputCreateCursors(game) {
     return game.input.keyboard.createCursorKeys();
 }
 
-function inputUpdateCursorMovement(game, cursors) {
+/**
+ * Moves the camera based on the cursor keys.
+ * @param game
+ * @param cursors
+ */
+function inputMoveCameraByCursor(game, cursors) {
     var movementSpeed = 20;
 
     if (cursors.up.isDown) {
@@ -41,6 +53,10 @@ function inputUpdateCursorMovement(game, cursors) {
     }
 }
 
+/**
+ * Moves the camera based on the mouse.
+ * @param game
+ */
 function inputMoveCameraByPointer(game) {
     var movementSpeed = 20;
     var hotArea = 100;
@@ -58,31 +74,49 @@ function inputMoveCameraByPointer(game) {
     if (game.input.mousePointer.position.y >= heightActionArea) {
         game.camera.y += movementSpeed;
     }
-    if(game.input.mousePointer.position.y <= hotArea) {
+    if (game.input.mousePointer.position.y <= hotArea) {
         game.camera.y -= movementSpeed;
     }
-
-
-    // console.log('pointerLocation', pointerLocation);
-    // console.log('currentPointerLocation', currentPointerLocation);
-
-    // game.create();
-    // game.input.mousePointer
-    // if (!currentPointerLocation.timeDown) {
-    //     return;
-    // }
-    // if (currentPointerLocation.isDown && !currentPointerLocation.targetObject) {
-    //     if (pointerLocation) {
-    // console.log(game.input.mousePointer);
-    // game.camera.x += game.input.mousePointer.screenX;
-    // game.camera.y += game.input.mousePointer.screenY;
-    // game.camera.y += pointerLocation.y;
-    // }
-    // pointerLocation = currentPointerLocation.position.clone();
-    // }
-    // if (currentPointerLocation.isUp) {
-    //     pointerLocation = null;
-    // }
-    // return pointerLocation;
 }
 
+/**
+ * Creates a selection area using the mouse.
+ * @param initMouseX
+ * @param initMouseY
+ * @param selectionAreaGraphics
+ * @param game
+ * @param callback
+ */
+function inputSelectionArea(initMouseX, initMouseY, selectionAreaGraphics, game, callback) {
+    if (game.input.mousePointer.leftButton.isDown) {
+        if (!initMouseX && !initMouseY) {
+            initMouseX = game.input.mousePointer.x + game.camera.x;
+            initMouseY = game.input.mousePointer.y + game.camera.y;
+        }
+
+        var startX = game.input.mousePointer.x - initMouseX + game.camera.x;
+        var startY = game.input.mousePointer.y - initMouseY + game.camera.y;
+
+        if (selectionAreaGraphics) {
+            selectionAreaGraphics.kill();
+        }
+
+        var selectAreaGraphic = game.add.graphics(0, 0);
+        selectAreaGraphic.beginFill(0x1193df);
+        selectAreaGraphic.lineStyle(2, 0x0f84c7, 1);
+        selectAreaGraphic.drawRect(initMouseX, initMouseY, startX, startY);
+        selectAreaGraphic.endFill();
+        selectAreaGraphic.alpha = 0.4;
+        selectionAreaGraphics = selectAreaGraphic;
+
+    } else {
+        initMouseX = false;
+        initMouseY = false;
+        // selectionArea = false;
+        if (selectionAreaGraphics) {
+            selectionAreaGraphics.kill();
+            selectionAreaGraphics = false;
+        }
+    }
+    callback(initMouseX, initMouseY, selectionAreaGraphics);
+}
