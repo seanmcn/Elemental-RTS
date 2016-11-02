@@ -10,14 +10,21 @@ function mapPreload(game) {
 /**
  * Create the game map
  * @param game
+ * @param mapGroup
  */
-function mapCreate(game) {
+function mapCreate(game, mapGroup) {
     // Load in the map!
     var map = game.add.tilemap('example-map');
 
     map.addTilesetImage('tilesheet_complete');
 
-    var layer = map.createLayer(0);
-    map.createLayer(1);
-    layer.resizeWorld();
+    var bottomLayer = map.createLayer(0);
+    var middleLayer = map.createLayer(1);
+    bottomLayer.resizeWorld();
+
+    mapGroup.add(bottomLayer);
+    mapGroup.add(middleLayer);
+    // mapGroup.height = game.height - 100;
+    // mapGroup.cameraOffset.setTo(0, 150);
+    mapGroup.bottom = game.height - 150;
 }

@@ -25,7 +25,15 @@ window.onload = function () {
 
     var cameraMovementSpeed = 30;
 
+    var mapDisplayGroup;
+    var uiDisplayGroup;
+    var unitDisplayGroup;
+
     function preload() {
+        mapDisplayGroup = game.add.group();
+        uiDisplayGroup = game.add.group();
+        unitDisplayGroup = game.add.group();
+
         mapPreload(game);
     }
 
@@ -33,8 +41,11 @@ window.onload = function () {
         // Set camera size and scale
         cameraSetScaleAndSize(game, width, height);
 
+        // Create UI
+        uiCreate(game, uiDisplayGroup);
+
         // Create Map
-        mapCreate(game);
+        mapCreate(game, mapDisplayGroup);
 
         // Create Physics.
         physicsCreate(game);
@@ -48,6 +59,9 @@ window.onload = function () {
 
 
         game.input.mouse.capture = true;
+
+        game.world.bringToTop(mapDisplayGroup);
+        game.world.bringToTop(uiDisplayGroup);
 
 
     }
@@ -68,7 +82,7 @@ window.onload = function () {
         cameraDebug(game);
         // playerDebug(game, player);
 
-        $('#mineral_count').html(minerals);
+        // $('#mineral_count').html(minerals);
 
     }
 
