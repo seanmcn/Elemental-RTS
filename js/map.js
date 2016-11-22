@@ -24,7 +24,4 @@ function mapCreate(game, mapGroup) {
 
     mapGroup.add(bottomLayer);
     mapGroup.add(middleLayer);
-    // mapGroup.height = game.height - 100;
-    // mapGroup.cameraOffset.setTo(0, 150);
-    mapGroup.bottom = game.height - 150;
 }
