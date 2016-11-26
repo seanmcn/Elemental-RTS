@@ -3,8 +3,8 @@
  * @param game
  */
 function mapPreload(game) {
-    game.load.tilemap('example-map', '/assets/tilemaps/example-map.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('space', '/assets/tilesets/space.jpg');
+    game.load.tilemap('whirlpool-map', '/assets/maps/whirlpool-map.json', null, Phaser.Tilemap.TILED_JSON);
+    game.load.image('whirlpool', '/assets/maps/whirlpool.jpg');
     game.load.image('player', '/assets/images/player.png');
 }
 /**
@@ -14,9 +14,9 @@ function mapPreload(game) {
  */
 function mapCreate(game, mapGroup) {
     // Load in the map!
-    var map = game.add.tilemap('example-map');
+    var map = game.add.tilemap('whirlpool-map');
 
-    map.addTilesetImage('tilesheet_complete');
+    map.addTilesetImage('whirlpool');
 
     var bottomLayer = map.createLayer(0);
     var middleLayer = map.createLayer(1);
