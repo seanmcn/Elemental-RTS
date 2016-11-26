@@ -35,6 +35,7 @@ window.onload = function () {
         unitDisplayGroup = game.add.group();
 
         mapPreload(game);
+        unitsPreloadSprites(game);
     }
 
     function create() {
@@ -62,6 +63,10 @@ window.onload = function () {
 
         game.world.bringToTop(mapDisplayGroup);
         game.world.bringToTop(uiDisplayGroup);
+
+
+        unitsCreateInitialWorkers(game);
+        unitsCreateInitialUnits(game);
 
 
     }
