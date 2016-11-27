@@ -93,9 +93,9 @@ window.onload = function () {
     function render() {
         // cameraDebug(game);
         // playerDebug(game, player);
-        workers.forEach(function (worker) {
-            game.debug.spriteInfo(worker, 32, 32);
-        }, this);
+        // workers.forEach(function (worker) {
+        //     game.debug.spriteInfo(worker, 32, 32);
+        // }, this);
         // $('#mineral_count').html(minerals);
 
     }
