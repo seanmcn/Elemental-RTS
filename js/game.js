@@ -29,6 +29,11 @@ window.onload = function () {
     var uiDisplayGroup;
     var unitDisplayGroup;
 
+    var unitGroupMovementInProcess = false;
+    var unitGroupMoveToX = 0;
+    var unitGroupMoveToY = 0;
+
+
     function preload() {
         mapDisplayGroup = game.add.group();
         uiDisplayGroup = game.add.group();
@@ -81,12 +86,39 @@ window.onload = function () {
             initMouseY = iMY;
             selectionAreaGraphics = sAG;
         });
+
+
+        if(game.input.mousePointer.isDown) {
+            unitGroupMoveToX = game.input.mousePointer.x;
+            unitGroupMoveToY = game.input.mousePointer.y;
+            unitGroupMovementInProcess = true;
+        }
+
+        if(unitGroupMovementInProcess == true) {
+            workers.forEach(function (worker) {
+                var dist=game.physics.arcade.distanceToXY(worker, unitGroupMoveToX , unitGroupMoveToY);
+
+                if ( (Math.round(dist)>=-1 && Math.round(dist)<=1) || unitGroupMovementInProcess == false)
+                {
+                    worker.body.velocity.x=0;
+                    worker.body.velocity.y=0;
+                    unitGroupMovementInProcess = false;
+                }
+                else{
+                    game.physics.arcade.moveToXY(worker, unitGroupMoveToX , unitGroupMoveToY, 150);
+                }
+            }, this);
+        }
+
+
     }
 
     function render() {
-        cameraDebug(game);
+        // cameraDebug(game);
         // playerDebug(game, player);
-
+        workers.forEach(function (worker) {
+            game.debug.spriteInfo(worker, 32, 32);
+        }, this);
         // $('#mineral_count').html(minerals);
 
     }

@@ -12,9 +12,11 @@ function unitsPreloadSprites(game) {
 }
 
 function unitsCreateInitialWorkers(game) {
-    workers = game.add.group();
+    workers = game.add.physicsGroup();
 
     workers.create(200, 240, 'worker');
+
+
 }
 
 function unitsCreateInitialUnits(game) {

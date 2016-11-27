@@ -3,5 +3,5 @@
  * @param game
  */
 function physicsCreate(game) {
-    game.physics.startSystem(Phaser.Physics.P2JS);
+    game.physics.startSystem(Phaser.Physics.ARCADE);
 }
