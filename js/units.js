@@ -1,10 +1,9 @@
-/*
- * ElementalRTS is copyright of Sean McNamara<me@seanmcn.com> (c) 2016.
- *
- */
-
 var workers;
 var units;
+
+var unitGroupMovementInProcess = false;
+var unitGroupMoveToX = 0;
+var unitGroupMoveToY = 0;
 
 function unitsPreloadSprites(game) {
     game.load.image('worker', 'assets/sprites/worker.png');
@@ -12,15 +11,67 @@ function unitsPreloadSprites(game) {
 }
 
 function unitsCreateInitialWorkers(game) {
-    workers = game.add.physicsGroup();
+    workers = game.add.group();
+    workers.enableBody = true;
+    workers.physicsBodyType = Phaser.Physics.ARCADE;
 
-    workers.create(200, 240, 'worker');
+    var worker = workers.create(250, 250, 'worker');
+    // Set the anchor point to center of sprite
+    worker.anchor.setTo(0.5, 0.5);
+    // Set drag and velocity.
+    worker.body.drag.set(50);
+    worker.body.maxVelocity.set(300);
 
+    // Note Sean: couldn't get the below to actually work?
+    // Don't allow to exit world
+    // worker.checkWorldBounds = true;
+    // worker.body.collideWorldBounds = true;
+    // worker.events.onOutOfBounds.add(unitOutOfBounds, this);
 
 }
+
+// function unitOutOfBounds(worker) {
+//     console.log("out of bounds unit");
+// }
 
 function unitsCreateInitialUnits(game) {
     units = game.add.group();
 
     units.create(500, 250, 'fighter-fire');
+}
+
+function unitsHandleMovement(game) {
+    if (game.input.mousePointer.isDown) {
+        unitGroupMoveToX = game.input.mousePointer.worldX;
+        unitGroupMoveToY = game.input.mousePointer.worldY;
+        unitGroupMovementInProcess = true;
+    }
+    //Todo Sean: This is only working for the worker at the moment, need to switch to work with units that are in the current selection group.
+    if (unitGroupMovementInProcess == true) {
+        workers.forEach(function (worker) {
+            var dist = game.physics.arcade.distanceToXY(worker, unitGroupMoveToX, unitGroupMoveToY);
+            if ((Math.round(dist) >= -2 && Math.round(dist) <= 2) || unitGroupMovementInProcess == false) {
+                worker.body.velocity.x = 0;
+                worker.body.velocity.y = 0;
+                unitGroupMovementInProcess = false;
+            }
+            else {
+                // Check we aren't going to get stuck trying to move out of bounds because of sprite width / height
+                if (unitGroupMoveToY < (worker.height / 2)) {
+                    unitGroupMoveToY = worker.height / 2;
+                }
+                if (unitGroupMoveToX < (worker.width / 2)) {
+                    unitGroupMoveToX = worker.width / 2;
+                }
+                if (unitGroupMoveToX > (game.world.width - ( worker.width / 2))) {
+                    unitGroupMoveToX = game.world.width - ( worker.width /2);
+                }
+                if (unitGroupMoveToY > (game.world.height - ( worker.height / 2))) {
+                    unitGroupMoveToY = game.world.height - ( worker.height /2);
+                }
+                // Move the sprite to the location clicked by the mouse.
+                game.physics.arcade.moveToXY(worker, unitGroupMoveToX, unitGroupMoveToY, 250);
+            }
+        }, this);
+    }
 }

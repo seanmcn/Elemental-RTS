@@ -29,10 +29,6 @@ window.onload = function () {
     var uiDisplayGroup;
     var unitDisplayGroup;
 
-    var unitGroupMovementInProcess = false;
-    var unitGroupMoveToX = 0;
-    var unitGroupMoveToY = 0;
-
 
     function preload() {
         mapDisplayGroup = game.add.group();
@@ -41,9 +37,12 @@ window.onload = function () {
 
         mapPreload(game);
         unitsPreloadSprites(game);
+
     }
 
     function create() {
+
+
         // Set camera size and scale
         cameraSetScaleAndSize(game, width, height);
 
@@ -63,7 +62,6 @@ window.onload = function () {
         game.input.keyboard.addKeys(keys);
 //            inputCreateMouseLock(game);
 
-
         game.input.mouse.capture = true;
 
         game.world.bringToTop(mapDisplayGroup);
@@ -77,6 +75,7 @@ window.onload = function () {
     }
 
     function update() {
+        // console.log(game.world);
         inputMoveCameraByCursor(cameraMovementSpeed, game, cursors);
         inputMoveCameraByPointer(cameraMovementSpeed, game);
 
@@ -87,30 +86,8 @@ window.onload = function () {
             selectionAreaGraphics = sAG;
         });
 
-
-        if(game.input.mousePointer.isDown) {
-            unitGroupMoveToX = game.input.mousePointer.x;
-            unitGroupMoveToY = game.input.mousePointer.y;
-            unitGroupMovementInProcess = true;
-        }
-
-        if(unitGroupMovementInProcess == true) {
-            workers.forEach(function (worker) {
-                var dist=game.physics.arcade.distanceToXY(worker, unitGroupMoveToX , unitGroupMoveToY);
-
-                if ( (Math.round(dist)>=-1 && Math.round(dist)<=1) || unitGroupMovementInProcess == false)
-                {
-                    worker.body.velocity.x=0;
-                    worker.body.velocity.y=0;
-                    unitGroupMovementInProcess = false;
-                }
-                else{
-                    game.physics.arcade.moveToXY(worker, unitGroupMoveToX , unitGroupMoveToY, 150);
-                }
-            }, this);
-        }
-
-
+        // Handle unit movement
+        unitsHandleMovement(game);
     }
 
     function render() {
