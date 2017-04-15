@@ -18,17 +18,11 @@ window.onload = function () {
 
     var minerals = 1200;
 
-    var initMouseX = false;
-    var initMouseY = false;
-
-    var selectionAreaGraphics = false;
-
     var cameraMovementSpeed = 30;
 
     var mapDisplayGroup;
     var uiDisplayGroup;
     var unitDisplayGroup;
-
 
     function preload() {
         mapDisplayGroup = game.add.group();
@@ -79,14 +73,10 @@ window.onload = function () {
         inputMoveCameraByCursor(cameraMovementSpeed, game, cursors);
         inputMoveCameraByPointer(cameraMovementSpeed, game);
 
-        //Note Sean: Is a callback really needed here? Need to think about this.
-        inputSelectionArea(initMouseX, initMouseY, selectionAreaGraphics, game, function (iMX, iMY, sAG) {
-            initMouseX = iMX;
-            initMouseY = iMY;
-            selectionAreaGraphics = sAG;
-        });
+        // Creating selection area
+        inputSelectionArea(game);
 
-        // Handle unit movement
+        // Handle units
         unitsHandleMovement(game);
     }
 
