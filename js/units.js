@@ -1,7 +1,10 @@
-var workers, units, allUnits, selectedUnits, unitsToMove, unitGroupMoveToX, unitGroupMoveToY, internalUnitId;
-allUnits = selectedUnits = [];
-unitsToMove = {};
-unitGroupMoveToX = unitGroupMoveToY = internalUnitId = 0;
+var workers, units;
+var allUnits = [];
+var selectedUnits = [];
+var unitsToMove = {};
+var unitGroupMoveToX = 0;
+var unitGroupMoveToY = 0;
+var internalUnitId = 0;
 var unitGroupMovementInProcess = false;
 
 /**
@@ -29,6 +32,7 @@ function unitsCreateInitialWorkers(game) {
     worker.body.drag.set(50);
     worker.body.maxVelocity.set(300);
     worker.internal_id = internalUnitId;
+    worker.angle = 90;
     internalUnitId++;
     allUnits.push(worker);
 
@@ -39,6 +43,8 @@ function unitsCreateInitialWorkers(game) {
     workerTwo.body.drag.set(50);
     workerTwo.body.maxVelocity.set(300);
     workerTwo.internal_id = internalUnitId;
+    workerTwo.angle = 90;
+
     internalUnitId++;
     allUnits.push(workerTwo);
 
@@ -66,6 +72,7 @@ function unitsCreateInitialUnits(game) {
     unit.body.drag.set(50);
     unit.body.maxVelocity.set(300);
     unit.internal_id = internalUnitId;
+    unit.angle = 90;
     internalUnitId++;
     allUnits.push(unit);
 }
@@ -74,11 +81,22 @@ function unitsCreateInitialUnits(game) {
  * @param game
  */
 function unitsHandleMovement(game) {
+
     if (game.input.mousePointer.rightButton.isDown) {
         unitGroupMovementInProcess = true;
         selectedUnits.forEach(function (unit) {
             var key = unit.internal_id;
-            unitsToMove[key] = {x: game.input.mousePointer.worldX, y: game.input.mousePointer.worldY}
+
+            // Figure out the angle we should be pointing at.
+            var targetAngle = (360 / (2 * Math.PI)) * game.math.angleBetween(
+                    unit.x, unit.y,
+                    game.input.mousePointer.worldX, game.input.mousePointer.worldY) + 90;
+
+            if(targetAngle < 0) {
+                targetAngle += 360;
+            }
+
+            unitsToMove[key] = {x: game.input.mousePointer.worldX, y: game.input.mousePointer.worldY, angle: targetAngle}
         });
     }
 
@@ -91,6 +109,8 @@ function unitsHandleMovement(game) {
                 allUnits.forEach(function (unit) {
                     if (unit.internal_id === internal_id) {
                         var dist = game.physics.arcade.distanceToXY(unit, coordinates.x, coordinates.y);
+
+                        unit.angle = coordinates.angle;
 
                         if ((Math.round(dist) >= -2 && Math.round(dist) <= 2)) {
                             unit.body.velocity.x = 0;
