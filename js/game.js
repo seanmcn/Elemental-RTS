@@ -1,4 +1,5 @@
 window.onload = function () {
+    // Get window size to use for the game
     var height = window.innerHeight;
     var width = window.innerWidth;
 
@@ -9,20 +10,16 @@ window.onload = function () {
         render: render
     });
 
-    var keys;
-
+    // Todo Sean: cannot remember why i'm doing this again here.. Test later.
     game.width = width;
     game.height = height;
 
-    var cursors;
+    var keys, mapDisplayGroup, uiDisplayGroup, unitDisplayGroup, cursors;
 
+    // Todo: Mineral
     var minerals = 1200;
 
     var cameraMovementSpeed = 30;
-
-    var mapDisplayGroup;
-    var uiDisplayGroup;
-    var unitDisplayGroup;
 
     function preload() {
         mapDisplayGroup = game.add.group();
@@ -35,8 +32,6 @@ window.onload = function () {
     }
 
     function create() {
-
-
         // Set camera size and scale
         cameraSetScaleAndSize(game, width, height);
 
@@ -60,6 +55,8 @@ window.onload = function () {
 
         game.world.bringToTop(mapDisplayGroup);
         game.world.bringToTop(uiDisplayGroup);
+
+        game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 
 
         unitsCreateInitialWorkers(game);
