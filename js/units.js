@@ -1,9 +1,8 @@
-var workers, units, selectedUnits, unitsCurrentlyMoving, unitGroupMoveToX, unitGroupMoveToY;
-selectedUnits = unitsCurrentlyMoving = [];
-unitGroupMoveToX = unitGroupMoveToY = 0;
+var workers, units, allUnits, selectedUnits, unitsToMove, unitGroupMoveToX, unitGroupMoveToY, internalUnitId;
+allUnits = selectedUnits = [];
+unitsToMove = {};
+unitGroupMoveToX = unitGroupMoveToY = internalUnitId = 0;
 var unitGroupMovementInProcess = false;
-
-// var unitsCurrentlyMoving = [];
 
 /**
  * Preload sprites
@@ -29,13 +28,20 @@ function unitsCreateInitialWorkers(game) {
     // Set drag and velocity.
     worker.body.drag.set(50);
     worker.body.maxVelocity.set(300);
+    worker.internal_id = internalUnitId;
+    internalUnitId++;
+    allUnits.push(worker);
 
     var workerTwo = workers.create(150, 150, 'worker');
     // Set the anchor point to center of sprite
-    worker.anchor.setTo(0.5, 0.5);
+    workerTwo.anchor.setTo(0.5, 0.5);
     // Set drag and velocity.
-    worker.body.drag.set(50);
-    worker.body.maxVelocity.set(300);
+    workerTwo.body.drag.set(50);
+    workerTwo.body.maxVelocity.set(300);
+    workerTwo.internal_id = internalUnitId;
+    internalUnitId++;
+    allUnits.push(workerTwo);
+
 
     // Note Sean: couldn't get the below to actually work?
     // Don't allow to exit world
@@ -59,67 +65,63 @@ function unitsCreateInitialUnits(game) {
     // Set drag and velocity.
     unit.body.drag.set(50);
     unit.body.maxVelocity.set(300);
+    unit.internal_id = internalUnitId;
+    internalUnitId++;
+    allUnits.push(unit);
 }
 /**
  * Handle moving units to location chosen by mouse right click.
  * @param game
  */
 function unitsHandleMovement(game) {
-    // If we don't have any units selected, there is nothing to do.
-    if(selectedUnits.length === 0) {
-        return;
-    }
-
     if (game.input.mousePointer.rightButton.isDown) {
-        unitGroupMoveToX = game.input.mousePointer.worldX;
-        unitGroupMoveToY = game.input.mousePointer.worldY;
         unitGroupMovementInProcess = true;
-
-        // Note: Bit of a mess due to wanting to keep keys for use later.
-        unitsCurrentlyMoving = selectedUnits.slice();
-        unitsCurrentlyMoving = Object.assign({}, unitsCurrentlyMoving);
+        selectedUnits.forEach(function (unit) {
+            var key = unit.internal_id;
+            unitsToMove[key] = {x: game.input.mousePointer.worldX, y: game.input.mousePointer.worldY}
+        });
     }
 
     if (unitGroupMovementInProcess === true) {
-        selectedUnits.forEach(function (unit, index) {
+        for (var key in unitsToMove) {
+            if (unitsToMove.hasOwnProperty(key)) {
+                var coordinates = unitsToMove[key];
+                var internal_id = parseInt(key);
 
-            //If we are done with this unit, don't bother processing any further.
-            if (!(index in unitsCurrentlyMoving)) {
-                return;
+                allUnits.forEach(function (unit) {
+                    if (unit.internal_id === internal_id) {
+                        var dist = game.physics.arcade.distanceToXY(unit, coordinates.x, coordinates.y);
+
+                        if ((Math.round(dist) >= -2 && Math.round(dist) <= 2)) {
+                            unit.body.velocity.x = 0;
+                            unit.body.velocity.y = 0;
+                            delete unitsToMove[internal_id];
+                        }
+                        else {
+                            // Check we aren't going to get stuck trying to move out of bounds because of sprite width / height
+                            if (coordinates.y < (unit.height / 2)) {
+                                coordinates.y = unit.height / 2;
+                            }
+                            if (coordinates.x < (unit.width / 2)) {
+                                coordinates.x = unit.width / 2;
+                            }
+                            if (coordinates.x > (game.world.width - ( unit.width / 2))) {
+                                coordinates.x = game.world.width - ( unit.width / 2);
+                            }
+                            if (coordinates.y > (game.world.height - ( unit.height / 2))) {
+                                coordinates.y = game.world.height - ( unit.height / 2);
+                            }
+                            // Move the sprite to the location clicked by the mouse.
+                            game.physics.arcade.moveToXY(unit, coordinates.x, coordinates.y, 250);
+                        }
+                    }
+                }, this);
             }
-
-            // Figure out the distance we need to move
-            var dist = game.physics.arcade.distanceToXY(unit, unitGroupMoveToX, unitGroupMoveToY);
-
-            if ((Math.round(dist) >= -2 && Math.round(dist) <= 2)) {
-                unit.body.velocity.x = 0;
-                unit.body.velocity.y = 0;
-                delete unitsCurrentlyMoving[index];
-            }
-            else {
-                // Check we aren't going to get stuck trying to move out of bounds because of sprite width / height
-                if (unitGroupMoveToY < (unit.height / 2)) {
-                    unitGroupMoveToY = unit.height / 2;
-                }
-                if (unitGroupMoveToX < (unit.width / 2)) {
-                    unitGroupMoveToX = unit.width / 2;
-                }
-                if (unitGroupMoveToX > (game.world.width - ( unit.width / 2))) {
-                    unitGroupMoveToX = game.world.width - ( unit.width / 2);
-                }
-                if (unitGroupMoveToY > (game.world.height - ( unit.height / 2))) {
-                    unitGroupMoveToY = game.world.height - ( unit.height / 2);
-                }
-                // Move the sprite to the location clicked by the mouse.
-                game.physics.arcade.moveToXY(unit, unitGroupMoveToX, unitGroupMoveToY, 250);
-            }
-        }, this);
-
-        if (Object.keys(unitsCurrentlyMoving).length === 0 && unitsCurrentlyMoving.constructor === Object) {
-            unitGroupMovementInProcess = false;
         }
 
-
+        if (Object.keys(unitsToMove).length === 0 && unitsToMove.constructor === Object) {
+            unitGroupMovementInProcess = false;
+        }
     }
 }
 /**
