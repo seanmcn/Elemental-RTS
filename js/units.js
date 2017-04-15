@@ -29,10 +29,14 @@ function unitsCreateInitialWorkers(game) {
     // Set the anchor point to center of sprite
     worker.anchor.setTo(0.5, 0.5);
     // Set drag and velocity.
+    worker.body.enable = true;
     worker.body.drag.set(50);
     worker.body.maxVelocity.set(300);
     worker.internal_id = internalUnitId;
     worker.angle = 90;
+    worker.body.collideWorldBounds = true;
+
+
     internalUnitId++;
     allUnits.push(worker);
 
@@ -40,19 +44,22 @@ function unitsCreateInitialWorkers(game) {
     // Set the anchor point to center of sprite
     workerTwo.anchor.setTo(0.5, 0.5);
     // Set drag and velocity.
+    workerTwo.body.enable = true;
     workerTwo.body.drag.set(50);
     workerTwo.body.maxVelocity.set(300);
     workerTwo.internal_id = internalUnitId;
+    workerTwo.body.collideWorldBounds = true;
+
     workerTwo.angle = 90;
 
     internalUnitId++;
     allUnits.push(workerTwo);
 
+    game.physics.enable([ workers ], Phaser.Physics.ARCADE);
 
     // Note Sean: couldn't get the below to actually work?
     // Don't allow to exit world
     // worker.checkWorldBounds = true;
-    // worker.body.collideWorldBounds = true;
     // worker.events.onOutOfBounds.add(unitOutOfBounds, this);
 
 }

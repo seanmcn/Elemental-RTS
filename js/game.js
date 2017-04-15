@@ -75,6 +75,10 @@ window.onload = function () {
 
         // Handle units
         unitsHandleMovement(game);
+
+        game.physics.arcade.collide(allUnits, allUnits);
+        // game.physics.arcade.collide(units, units);
+
     }
 
     function render() {
