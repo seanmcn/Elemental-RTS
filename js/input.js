@@ -1,3 +1,6 @@
+var selectionAreaGraphics;
+var mouseInputStorage = {};
+
 /**
  * Create an object of input keys for easier reference within the game.
  * @returns object of input keys.
@@ -80,42 +83,43 @@ function inputMoveCameraByPointer(cameraMovementSpeed, game) {
 
 /**
  * Creates a selection area using the mouse.
- * @param initMouseX
- * @param initMouseY
- * @param selectionAreaGraphics
  * @param game
- * @param callback
  */
-function inputSelectionArea(initMouseX, initMouseY, selectionAreaGraphics, game, callback) {
+function inputSelectionArea(game) {
     if (game.input.mousePointer.leftButton.isDown) {
-        if (!initMouseX && !initMouseY) {
-            initMouseX = game.input.mousePointer.x + game.camera.x;
-            initMouseY = game.input.mousePointer.y + game.camera.y;
+        // If we don't have start points, we've just clicked, so save them.
+        if (!mouseInputStorage.x && !mouseInputStorage.y) {
+            mouseInputStorage.x = game.input.mousePointer.x + game.camera.x;
+            mouseInputStorage.y = game.input.mousePointer.y + game.camera.y;
         }
 
-        var startX = game.input.mousePointer.x - initMouseX + game.camera.x;
-        var startY = game.input.mousePointer.y - initMouseY + game.camera.y;
+        // While we are still holding pointer down we want to save current location as end points.
+        mouseInputStorage.width = game.input.mousePointer.x - mouseInputStorage.x + game.camera.x;
+        mouseInputStorage.height = game.input.mousePointer.y - mouseInputStorage.y + game.camera.y;
 
         if (selectionAreaGraphics) {
             selectionAreaGraphics.kill();
         }
 
         var selectAreaGraphic = game.add.graphics(0, 0);
-        selectAreaGraphic.beginFill(0x1193df);
+        selectAreaGraphic.beginFill(0x1193df, 0.5);
         selectAreaGraphic.lineStyle(2, 0x0f84c7, 1);
-        selectAreaGraphic.drawRect(initMouseX, initMouseY, startX, startY);
+        selectAreaGraphic.drawRect(mouseInputStorage.x, mouseInputStorage.y, mouseInputStorage.width, mouseInputStorage.height);
         selectAreaGraphic.endFill();
         selectAreaGraphic.alpha = 0.4;
         selectionAreaGraphics = selectAreaGraphic;
 
     } else {
-        initMouseX = false;
-        initMouseY = false;
-        // selectionArea = false;
+        // Selection is over, if we have made a selection find units within that.
+        if(mouseInputStorage.hasOwnProperty('x') && mouseInputStorage.x !== false) {
+            unitsAddToSelectionGroupByCoordinates(mouseInputStorage.x, mouseInputStorage.y, mouseInputStorage.width, mouseInputStorage.height);
+        }
+        // Reset everything back.
+        mouseInputStorage = {};
+
         if (selectionAreaGraphics) {
             selectionAreaGraphics.kill();
             selectionAreaGraphics = false;
         }
     }
-    callback(initMouseX, initMouseY, selectionAreaGraphics);
 }

@@ -52959,7 +52959,7 @@ PIXI.Graphics.prototype.arc = function(cx, cy, radius, startAngle, endAngle, ant
     }
     else
     {
-        this.moveTo(startX, startY);
+        this.moveTo(x, y);
     }
 
     //  currentPath will always exist after calling a moveTo
