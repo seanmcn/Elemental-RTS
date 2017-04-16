@@ -46,23 +46,25 @@ window.onload = function () {
 
         // Create Input
         cursors = inputCreateCursors(game);
-
         keys = inputCreateKeys();
         game.input.keyboard.addKeys(keys);
+
+        // Locks the mouse to the screen, add to a hotkey later.
 //            inputCreateMouseLock(game);
 
         game.input.mouse.capture = true;
 
         game.world.bringToTop(mapDisplayGroup);
-        game.world.bringToTop(uiDisplayGroup);
 
+        // Disable right click context menu.
         game.canvas.oncontextmenu = function (e) { e.preventDefault(); };
 
-
+        // Crete initial workers etc.
         unitsCreateInitialWorkers(game);
         unitsCreateInitialUnits(game);
 
-
+        // Ensure UI is above everything.
+        game.world.bringToTop(uiDisplayGroup);
     }
 
     function update() {

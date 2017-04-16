@@ -24,45 +24,27 @@ function unitsCreateInitialWorkers(game) {
     workers = game.add.group();
     workers.enableBody = true;
     workers.physicsBodyType = Phaser.Physics.ARCADE;
+    workers.checkWorldBounds = true;
 
-    var worker = workers.create(250, 250, 'worker');
-    // Set the anchor point to center of sprite
-    worker.anchor.setTo(0.5, 0.5);
-    // Set drag and velocity.
-    worker.body.enable = true;
-    worker.body.drag.set(50);
-    worker.body.maxVelocity.set(300);
-    worker.internal_id = internalUnitId;
-    worker.angle = 90;
-    worker.body.collideWorldBounds = true;
-
-
-    internalUnitId++;
-    allUnits.push(worker);
-
-    var workerTwo = workers.create(150, 150, 'worker');
-    // Set the anchor point to center of sprite
-    workerTwo.anchor.setTo(0.5, 0.5);
-    // Set drag and velocity.
-    workerTwo.body.enable = true;
-    workerTwo.body.drag.set(50);
-    workerTwo.body.maxVelocity.set(300);
-    workerTwo.internal_id = internalUnitId;
-    workerTwo.body.collideWorldBounds = true;
-
-    workerTwo.angle = 90;
-
-    internalUnitId++;
-    allUnits.push(workerTwo);
-
-    game.physics.enable([ workers ], Phaser.Physics.ARCADE);
-
-    // Note Sean: couldn't get the below to actually work?
-    // Don't allow to exit world
-    // worker.checkWorldBounds = true;
-    // worker.events.onOutOfBounds.add(unitOutOfBounds, this);
-
+    for(var i =1; i < 4; i++){
+        var worker = workers.create(100 * i, 100 * i, 'worker');
+        // Give it an internal ID so it is easier to work with later.
+        worker.internal_id = internalUnitId;
+        // Set the anchor point to center of sprite
+        worker.anchor.setTo(0.5, 0.5);
+        // Angle the sprite in right direction
+        worker.angle = 90;
+        // Set drag and velocity.
+        worker.body.drag.set(50);
+        worker.body.maxVelocity.set(300);
+        // Collide with world bounds
+        worker.body.collideWorldBounds = true;
+        // Push into our unit storage
+        allUnits.push(worker);
+        internalUnitId++;
+    }
 }
+
 /**
  * Create the initial units.
  * @param game
@@ -71,18 +53,27 @@ function unitsCreateInitialUnits(game) {
     units = game.add.group();
     units.enableBody = true;
     units.physicsBodyType = Phaser.Physics.ARCADE;
+    units.checkWorldBounds = true;
 
-    var unit = units.create(500, 250, 'fighter-fire');
-    // Set the anchor point to center of sprite
-    unit.anchor.setTo(0.5, 0.5);
-    // Set drag and velocity.
-    unit.body.drag.set(50);
-    unit.body.maxVelocity.set(300);
-    unit.internal_id = internalUnitId;
-    unit.angle = 90;
-    internalUnitId++;
-    allUnits.push(unit);
+    for(var i =1; i < 4; i++){
+        var unit = units.create(500*i, 250*i, 'fighter-fire');
+        // Give it an internal ID so it is easier to work with later.
+        unit.internal_id = internalUnitId;
+        // Set the anchor point to center of sprite
+        unit.anchor.setTo(0.5, 0.5);
+        // Angle the sprite in right direction
+        unit.angle = 90;
+        // Set drag and velocity.
+        unit.body.drag.set(50);
+        unit.body.maxVelocity.set(300);
+        // Collide with world bounds
+        unit.body.collideWorldBounds = true;
+        // Push into our unit storage
+        allUnits.push(unit);
+        internalUnitId++;
+    }
 }
+
 /**
  * Handle moving units to location chosen by mouse right click.
  * @param game

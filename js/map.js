@@ -25,6 +25,5 @@ function mapCreate(game, mapGroup) {
     mapGroup.add(bottomLayer);
     mapGroup.add(middleLayer);
 
-    // game.world.setBounds(0, 0, 3200, 3200);
-
+    game.world.setBounds(0, 0, 3200, 3200);
 }
